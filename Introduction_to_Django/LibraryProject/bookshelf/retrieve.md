@@ -1,3 +1,4 @@
+from bookshelf.models import Book
 
 python manage.py shell
 
