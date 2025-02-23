@@ -27,11 +27,11 @@ urlpatterns = [
     path('member-view/', member_view, name='member_view'),
 
     # URL to add a book (requires 'can_add_book' permission)
-    path('books/add/', add_book, name='add_book'),
+    path('add_book/', add_book, name='add_book'),
 
     # URL to edit a book (requires 'can_change_book' permission)
-    path('books/edit/<int:book_id>/', edit_book, name='edit_book'),
+    path('edit_book/', edit_book, name='edit_book'),
 
     # URL to delete a book (requires 'can_delete_book' permission)
-    path('books/delete/<int:book_id>/', delete_book, name='delete_book'),
+    path('delete_book/', delete_book, name='delete_book'),
 ]
