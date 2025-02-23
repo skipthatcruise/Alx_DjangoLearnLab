@@ -4,7 +4,7 @@ from .views import list_books
 
 urlpatterns = [
     # Function-based view for listing all libraries
-    path('libraries/', library_list, name='library-list'),
+    path('libraries/', list_books, name='library-list'),
 
     # Class-based view for displaying details of a specific library
     path('library/<int:pk>/', LibraryDetailView.as_view(), name='library-detail'),
