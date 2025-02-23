@@ -4,7 +4,7 @@ from .models import Library
 from .models import Book
 
 # Function-Based View (FBV) for Listing All Libraries
-def library_list(request):
+def list_books(request):
     libraries = Book.objects.all()  # Fetch all libraries from the database
     return render(request, "relationship_app/list_books.html", {"libraries": libraries})
 
