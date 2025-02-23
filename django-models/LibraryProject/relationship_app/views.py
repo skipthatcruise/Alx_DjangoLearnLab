@@ -5,7 +5,48 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from .models import Library
 from .models import Book
+from .models import Author
+from django.contrib.auth.decorators import permission_required
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
+
+# 🚀 View to Add a New Book (Requires "can_add_book" Permission)
+@permission_required('relationship_app.can_add_book', raise_exception=True)
+def add_book(request):
+    if request.method == "POST":
+        title = request.POST.get('title')
+        author_id = request.POST.get('author')
+        if title and author_id:
+            author = get_object_or_404(Author, id=author_id)
+            Book.objects.create(title=title, author=author)
+            return redirect('list_books')  # Redirect to book list after adding
+    authors = Author.objects.all()  # Fetch all authors for selection
+    return render(request, "relationship_app/add_book.html", {"authors": authors})
+
+# 🚀 View to Edit a Book (Requires "can_change_book" Permission)
+@permission_required('relationship_app.can_change_book', raise_exception=True)
+def edit_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    if request.method == "POST":
+        book.title = request.POST.get('title')
+        author_id = request.POST.get('author')
+        if author_id:
+            book.author = get_object_or_404(Author, id=author_id)
+        book.save()
+        return redirect('list_books')  # Redirect to book list after editing
+    authors = Author.objects.all()  # Fetch all authors for selection
+    return render(request, "relationship_app/edit_book.html", {"book": book, "authors": authors})
+
+# 🚀 View to Delete a Book (Requires "can_delete_book" Permission)
+@permission_required('relationship_app.can_delete_book', raise_exception=True)
+def delete_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    if request.method == "POST":
+        book.delete()
+        return redirect('list_books')  # Redirect after successful deletion
+    return render(request, "relationship_app/delete_book.html", {"book": book})
+
+
 
 # Helper function to check roles
 def is_admin(user):

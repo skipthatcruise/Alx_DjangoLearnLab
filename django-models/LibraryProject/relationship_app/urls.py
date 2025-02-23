@@ -6,7 +6,9 @@ from .views import register
 from .views import admin_view
 from .views import librarian_view
 from .views import member_view
-
+from .views import add_book
+from .views import edit_book
+from .views import delete_book
 
 
 urlpatterns = [
@@ -23,4 +25,13 @@ urlpatterns = [
     path('admin-view/', admin_view, name='admin_view'),
     path('librarian-view/', librarian_view, name='librarian_view'),
     path('member-view/', member_view, name='member_view'),
+
+    # URL to add a book (requires 'can_add_book' permission)
+    path('books/add/', add_book, name='add_book'),
+
+    # URL to edit a book (requires 'can_change_book' permission)
+    path('books/edit/<int:book_id>/', edit_book, name='edit_book'),
+
+    # URL to delete a book (requires 'can_delete_book' permission)
+    path('books/delete/<int:book_id>/', delete_book, name='delete_book'),
 ]
