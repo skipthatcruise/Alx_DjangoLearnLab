@@ -1,7 +1,22 @@
 from django.views.generic.detail import DetailView
 from django.shortcuts import render
+from django.shortcuts import redirect
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from .models import Library
 from .models import Book
+
+# User Registration View
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Auto-login after registration
+            return redirect('list_books')  # Redirect after successful registration
+    else:
+        form = UserCreationForm()
+    return render(request, "relationship_app/register.html", {"form": form})
 
 # Function-Based View (FBV) for Listing All Libraries
 def list_books(request):

@@ -123,3 +123,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Redirect users after login/logout
+LOGIN_REDIRECT_URL = 'list_books'  # Redirect to library list after login
+LOGOUT_REDIRECT_URL = 'login'  # Redirect to login page after logout
