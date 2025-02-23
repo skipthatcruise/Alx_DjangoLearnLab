@@ -1,3 +1,18 @@
+from django.views.generic import DetailView
 from django.shortcuts import render
+from .models import Library
 
-# Create your views here.
+# Function-Based View (FBV) for Listing All Libraries
+def library_list(request):
+    libraries = Library.objects.all()  # Fetch all libraries from the database
+    return render(request, "relationship_app/library_list.html", {"libraries": libraries})
+
+class LibraryDetailView(DetailView):
+    model = Library
+    template_name = "relationship_app/library_detail.html"
+    context_object_name = "library"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["books"] = self.object.books.all()  # Fetch all books related to this library
+        return context
