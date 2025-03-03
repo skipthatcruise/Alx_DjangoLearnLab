@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+from django.conf.global_settings import AUTH_USER_MODEL
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -127,3 +129,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Redirect users after login/logout
 LOGIN_REDIRECT_URL = 'list_books'  # Redirect to library list after login
 LOGOUT_REDIRECT_URL = 'login'  # Redirect to login page after logout
+
+AUTH_USER_MODEL = "users.CustomUser"
