@@ -1,6 +1,7 @@
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.views import View
+from .forms import ExampleForm
 from django.shortcuts import render
 from .models import Book
 
