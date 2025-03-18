@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!ffh#cvef!i=)k5=!(@9eo8e(_5f@rw+8$t@=@aw0731qs_wf0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -131,3 +131,12 @@ LOGIN_REDIRECT_URL = 'list_books'  # Redirect to library list after login
 LOGOUT_REDIRECT_URL = 'login'  # Redirect to login page after logout
 
 AUTH_USER_MODEL = "bookshelf.CustomUser"
+
+SECURE_BROWSER_XSS_FILTER = True  # Helps prevent XSS attacks
+X_FRAME_OPTIONS = "DENY"  # Prevents clickjacking attacks
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Blocks MIME-type sniffing
+
+CSRF_COOKIE_SECURE = True  # Protects against CSRF attacks over HTTPS
+SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
+
+
