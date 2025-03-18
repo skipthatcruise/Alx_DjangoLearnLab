@@ -139,4 +139,12 @@ SECURE_CONTENT_TYPE_NOSNIFF = True  # Blocks MIME-type sniffing
 CSRF_COOKIE_SECURE = True  # Protects against CSRF attacks over HTTPS
 SESSION_COOKIE_SECURE = True  # Ensures session cookies are only sent over HTTPS
 
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year (adjust as needed)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply to all subdomains
+SECURE_HSTS_PRELOAD = True  # Allow preloading in browsers
+
+
+
+
 
