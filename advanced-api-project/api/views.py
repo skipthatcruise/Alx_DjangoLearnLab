@@ -2,7 +2,7 @@ from rest_framework import generics, serializers, permissions
 from .models import Book
 from .serializers import BookSerializer
 from datetime import datetime
-from rest_framework.permissions import IsAuthenticatedOrReadOnly,IsAuthenticated,
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 
 
