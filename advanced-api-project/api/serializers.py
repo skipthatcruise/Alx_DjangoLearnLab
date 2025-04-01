@@ -8,11 +8,12 @@ class BookSerializer(serializers.ModelSerializer):  #The BookSerializer is for c
         model = Book
         fields = '__all__'
 
-    def validate(self, value):
+    def validate(self, data):
         current_year = datetime.now().year
-        if value > current_year:
-            raise serializers.ValidationError(f"Publication year must not be more than {current_year}")
-        return value
+        publication_year = data.get("publication_year")
+        if publication_year and publication_year > current_year:
+            raise serializers.ValidationError({"publication_year": "Publication year cannot be in the future."})
+        return data
 
 class AuthorSerializer(serializers.ModelSerializer):  #The AuthorSerializer is for converting the Author models into JSON and to validate the data
     books = BookSerializer(many=True, read_only=True)
