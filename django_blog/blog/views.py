@@ -7,7 +7,8 @@ from .forms import CustomUserCreationForm
 from .forms import UserUpdateForm, ProfileUpdateForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from .models import Post
+from .models import Post, Comment
+from .forms import CommentForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import PostForm
 from django.http import HttpResponseForbidden
@@ -87,6 +88,13 @@ class PostDetailView(DetailView):
     template_name = 'blog/post_detail.html'  # Template for displaying a single post
     context_object_name = 'post'  # Context variable in the template
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+        context['comments'] = Comment.objects.filter(post=post)
+        context['comment_form'] = CommentForm()
+        return context
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -125,3 +133,45 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         if post.author != self.request.user:
             raise HttpResponseForbidden("You are not the author of this post.")
         return post
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        post_id = self.kwargs['pk']
+        post = get_object_or_404(Post, pk=post_id)
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
+
+
+

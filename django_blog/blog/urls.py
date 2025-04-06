@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 from . import views  # Import our custom views
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import CommentCreateView, CommentUpdateView, CommentDeleteView
 
 
 urlpatterns = [
@@ -30,6 +31,12 @@ urlpatterns = [
 
     # Delete an existing post
     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post_delete'),
+
+    # Comment URLs
+    path('posts/<int:pk>/comments/new/', CommentCreateView.as_view(), name='comment-create'),
+    path('comments/<int:pk>/edit/', CommentUpdateView.as_view(), name='comment-update'),
+    path('comments/<int:pk>/delete/', CommentDeleteView.as_view(), name='comment-delete'),
+
 
 ]
 
