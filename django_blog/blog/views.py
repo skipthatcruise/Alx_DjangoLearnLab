@@ -106,7 +106,7 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     form_class = PostForm
     template_name = 'blog/post_form.html'  # Template for editing a post
     # fields = ['title', 'content']  # Fields in the form
-    # success_url = reverse_lazy('post-list')  # Redirect to post list on success
+    success_url = reverse_lazy('posts-list')  # Redirect to post list on success
 
     def form_valid(self, form):
         post = self.get_object()
