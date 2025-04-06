@@ -7,8 +7,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     # Login and Logout using Django built-in views
-    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
+    path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='blog/logged_out.html'), name='logout'),
 
     # Custom registration and profile views
     path('register/', views.register_view, name='register'),
