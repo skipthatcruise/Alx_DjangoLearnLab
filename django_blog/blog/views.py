@@ -1,10 +1,18 @@
 from pyexpat.errors import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm
 from .forms import UserUpdateForm, ProfileUpdateForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Post
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import PostForm
+from django.http import HttpResponseForbidden
+
+
 
 def home(request):
     return render(request, 'blog/home.html')
@@ -66,3 +74,54 @@ def profile_view(request):
         'profile_form': profile_form
     })
 
+
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'  # Template for listing all posts
+    context_object_name = 'posts'  # Name for the context variable in the template
+    ordering = ['-published_date']  # Order posts by most recent
+
+
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'blog/post_detail.html'  # Template for displaying a single post
+    context_object_name = 'post'  # Context variable in the template
+
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    template_name = 'blog/post_form.html'  # Template for creating a new post
+    form_class = PostForm
+    # fields = ['title', 'content']  # Fields in the form
+    success_url = reverse_lazy('posts-list')  # Redirect to post list on success
+
+    # Automatically assign the logged-in user as the author of the post
+    def form_valid(self, form):
+        form.instance.author = self.request.user  # Set the logged-in user as the author
+        return super().form_valid(form)
+
+
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'blog/post_form.html'  # Template for editing a post
+    # fields = ['title', 'content']  # Fields in the form
+    # success_url = reverse_lazy('post-list')  # Redirect to post list on success
+
+    def form_valid(self, form):
+        post = self.get_object()
+        if post.author != self.request.user:
+            return HttpResponseForbidden("You are not the author of this post.")
+        return super().form_valid(form)
+
+
+class PostDeleteView(LoginRequiredMixin, DeleteView):
+    model = Post
+    template_name = 'blog/post_confirm_delete.html'  # Template for confirming post deletion
+    success_url = reverse_lazy('posts-list')  # Redirect to post list on success
+
+    def get_object(self):
+        post = super().get_object()
+        if post.author != self.request.user:
+            raise HttpResponseForbidden("You are not the author of this post.")
+        return post
