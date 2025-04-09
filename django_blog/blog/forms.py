@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import Profile
 from .models import Post
 from .models import Comment
+from taggit.forms import TagWidget
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -32,7 +33,10 @@ class ProfileUpdateForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content']  # Fields for the form (title, content)
+        fields = ['title', 'content', 'tags']# Fields for the form (title, content)
+        widgets = {
+            'tags': TagWidget(),
+        }
 
     # Automatically set the author to the logged-in user
     def save(self, commit=True):

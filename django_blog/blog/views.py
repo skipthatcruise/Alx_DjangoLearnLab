@@ -1,4 +1,4 @@
-from pyexpat.errors import messages
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -12,6 +12,26 @@ from .forms import CommentForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import PostForm
 from django.http import HttpResponseForbidden
+from django.db.models import Q
+from taggit.models import Tag
+
+def posts_by_tag(request, tag_name):
+    tag = get_object_or_404(Tag, name=tag_name)
+    posts = Post.objects.filter(tags__name__in=[tag.name])
+    return render(request, 'blog/posts_by_tag.html', {'tag': tag, 'posts': posts})
+
+def search_posts(request):
+    query = request.GET.get('q')
+    results = []
+
+    if query:
+        results = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+
+    return render(request, 'blog/search_results.html', {'query': query, 'results': results})
 
 
 
@@ -105,9 +125,10 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     # Automatically assign the logged-in user as the author of the post
     def form_valid(self, form):
-        form.instance.author = self.request.user  # Set the logged-in user as the author
-        return super().form_valid(form)
-
+        form.instance.author = self.request.user
+        response = super().form_valid(form)
+        form.save_m2m()  # Save tags
+        return response
 
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
@@ -120,7 +141,13 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
         post = self.get_object()
         if post.author != self.request.user:
             return HttpResponseForbidden("You are not the author of this post.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        form.save_m2m()  # Save updated tags
+        return response
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
 
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
