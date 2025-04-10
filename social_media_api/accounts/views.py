@@ -9,6 +9,10 @@ from .serializers import RegisterSerializer, LoginSerializer
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
+# accounts/views.py
+from rest_framework import generics
+from .serializers import CustomUserSerializer  # Import the serializer for CustomUser
+
 
 
 class RegisterView(APIView):
@@ -68,3 +72,10 @@ class UnfollowUserView(APIView):
 
         request.user.following.remove(user_to_unfollow)
         return Response({'message': f'You have unfollowed {user_to_unfollow.username}'}, status=status.HTTP_200_OK)
+
+
+
+class UserListView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()  # Get all users
+    serializer_class = CustomUserSerializer  # Use the serializer to return user data
+
