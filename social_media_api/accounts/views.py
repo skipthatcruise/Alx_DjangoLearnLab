@@ -74,8 +74,13 @@ class UnfollowUserView(APIView):
         return Response({'message': f'You have unfollowed {user_to_unfollow.username}'}, status=status.HTTP_200_OK)
 
 
+class UserListView(generics.GenericAPIView):
+    queryset = CustomUser.objects.all()  # Fetch all CustomUser instances from the database
+    serializer_class = CustomUserSerializer  # Specify the serializer to be used
 
-class UserListView(generics.ListAPIView):
-    queryset = CustomUser.objects.all()  # Get all users
-    serializer_class = CustomUserSerializer  # Use the serializer to return user data
+    def get(self, request, *args, **kwargs):
+        # This method handles GET requests
+        users = self.get_queryset()  # Get the queryset (CustomUser objects)
+        serializer = self.get_serializer(users, many=True)  # Serialize the user data
+        return Response(serializer.data)
 
