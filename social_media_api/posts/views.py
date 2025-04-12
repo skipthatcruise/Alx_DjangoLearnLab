@@ -8,6 +8,8 @@ from .models import Post, Like
 from .serializers import LikeSerializer
 from notifications.models import Notification
 from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404
+from rest_framework import generics
 
 
 
@@ -68,7 +70,8 @@ class LikePostView(APIView):
     def post(self, request, pk):
         # 🔍 Get the post being liked
         try:
-            post = Post.objects.get(pk=pk)
+            post = generics.get_object_or_404(Post, pk=pk)
+
         except Post.DoesNotExist:
             return Response({'detail': 'Post not found.'}, status=404)
 
