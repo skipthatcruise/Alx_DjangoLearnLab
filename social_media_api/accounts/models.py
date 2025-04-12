@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class CustomUser(AbstractUser):
-    bio = models.TextField(blank=True)
+    bio = models.TextField(default="", blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
 
     # New field for following users

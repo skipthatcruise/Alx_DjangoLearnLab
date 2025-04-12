@@ -12,3 +12,6 @@ class Book(models.Model): #The Book model is for storing details about the book 
 
     def __str__(self):
         return self.title
+
+
+
